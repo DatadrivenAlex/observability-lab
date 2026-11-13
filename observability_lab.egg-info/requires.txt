@@ -1,7 +1,0 @@
-fastapi<1,>=0.115
-uvicorn<1,>=0.30
-prometheus-client<1,>=0.21
-opentelemetry-api<2,>=1.29
-opentelemetry-sdk<2,>=1.29
-opentelemetry-exporter-otlp-proto-http<2,>=1.29
-opentelemetry-instrumentation-fastapi<1,>=0.50b0
