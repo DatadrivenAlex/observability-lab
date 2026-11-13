@@ -1,0 +1,13 @@
+groups:
+  - name: lab-rules
+    rules:
+      - alert: LabServiceDown
+        expr: up{job="observability-lab"} == 0
+        for: 30s
+        labels: {severity: warning}
+        annotations: {summary: "Demo API unavailable"}
+      - alert: LabHighErrorRate
+        expr: sum(rate(lab_http_requests_total{status=~"5.."}[1m])) / clamp_min(sum(rate(lab_http_requests_total[1m])), 0.001) > 0.2
+        for: 30s
+        labels: {severity: warning}
+        annotations: {summary: "Demo API error rate exceeds 20%"}

@@ -1,0 +1,29 @@
+services:
+  api:
+    build: .
+    ports: ["127.0.0.1:8000:8000"]
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+    depends_on: [jaeger]
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    ports: ["127.0.0.1:9090:9090"]
+    volumes:
+      - ./prometheus:/etc/prometheus:ro
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.retention.time=1d"]
+  grafana:
+    image: grafana/grafana:11.4.0
+    ports: ["127.0.0.1:3000:3000"]
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: local-demo-only
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on: [prometheus]
+  jaeger:
+    image: jaegertracing/all-in-one:1.63.0
+    ports: ["127.0.0.1:16686:16686"]
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
